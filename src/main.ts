@@ -1,7 +1,10 @@
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder } from '@nestjs/swagger';
 import { SwaggerModule } from '@nestjs/swagger/dist';
 import { AppModule } from './app.module';
+import "reflect-metadata";
+import { useContainer } from 'class-validator';
 
 async function bootstrap() {
   /**
@@ -9,6 +12,19 @@ async function bootstrap() {
    */
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix("api");
+  
+  /**
+   * @description - Create pipe on the app
+   */
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+ );
+  
+  useContainer(app.select(AppModule),{fallbackOnErrors:true});
 
   /**
    * @description - Swagger configuration
@@ -21,6 +37,7 @@ async function bootstrap() {
   .addTag("loja")
   .build()
 
+  
   const document = SwaggerModule.createDocument(app,config);
   SwaggerModule.setup("api",app,document);
 

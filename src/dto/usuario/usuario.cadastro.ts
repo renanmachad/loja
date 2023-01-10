@@ -1,17 +1,18 @@
+import { Injectable } from "@nestjs/common";
+import { IsEmail,IsNotEmpty,MinLength } from "class-validator";
+import { EmailUniqueValidation } from "src/validations/email.unico";
 
 
+@Injectable()
 export class UsuarioDTO{
-    private email:string;
-    private nome:string;
-    private telefone:number;
+   
+    @IsNotEmpty()
+    nome:string;
 
+    @IsEmail()
+    @EmailUniqueValidation({message:"Já existe usuário cadastrado com este e-mail"})
+    email:string;
 
-    public setEmail(email:string){
-        this.email=email;
-    }
-
-    public getEmail(email:string){
-        return this.email;
-    }
-    
+    @MinLength(8)
+    senha:string;
 }
