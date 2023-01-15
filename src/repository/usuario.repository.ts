@@ -11,26 +11,51 @@ export class UsuarioRepository{
     
     private Usuarios:UsuarioEntity[]= [];
 
+    private buscarPorId(id:string){
+        return this.Usuarios.find(usuario=>usuario.id ===id);
+    }
 
     async salvar(usuario:UsuarioEntity){
-        return this.Usuarios.push(usuario);
+        this.Usuarios.push(usuario);
+        return {user:new UsuarioGetAllDTO(usuario.nome,usuario.id)};
     }
     
     async listar(){
         return this.Usuarios.map((User:UsuarioEntity)=>{
-            return new UsuarioGetAllDTO(
-                User.id,
-                User.nome
-            )
+           return{
+                id: User.id,
+                nome:User.nome
+           }
         });
     }
 
-    async deletar(){
+    async deletar(id:string){
+        const encontraUsuario= this.buscarPorId(id);
+        this.Usuarios=this.Usuarios.filter(usuario=>usuario.id!==id);
 
+        return {
+            message:"Usuário excluído com sucesso"
+        }
     };
 
-    async atualizar(){
-        
+    async atualizar(id:string,dadosAtualizados:Partial<UsuarioEntity>){
+        const encontraUsuario= this.buscarPorId(id);
+
+        // usuario não encontrado
+        if(!encontraUsuario){
+            throw new Error("Usuário não existe");
+        }
+
+        Object.entries(dadosAtualizados).forEach(([chave,valor])=>{
+            if(chave==="id") return;
+
+            encontraUsuario[chave]=valor;
+
+        })
+
+        return{
+            message:"Usuário atualizado com"
+        };
     }
 
     async getUserByEmail(email:string):Promise<boolean>{
