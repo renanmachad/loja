@@ -58,6 +58,8 @@ $ yarn run test:e2e
 # test coverage
 $ yarn run test:cov
 ```
+## Description
+This is a project made for learning purpose
 
 ## Support
 
